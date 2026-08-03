@@ -70,3 +70,150 @@
 
 const readlineSync = require('readline-sync');
 
+/**
+ * Reads a matrix of size rows x cols from user input.
+ * @param {number} rows - Number of rows.
+ * @param {number} cols - Number of columns.
+ * @param {string} matrixLabel - Label for prompt identification.
+ * @returns {number[][]} - 2D Array representing the matrix.
+ */
+function readMatrix(rows, cols, matrixLabel = '') {
+  const labelPrefix = matrixLabel ? `${matrixLabel} - ` : '';
+  const matrix = [];
+
+  for (let i = 0; i < rows; i++) {
+    let rowInput = readlineSync.question(`Enter ${labelPrefix}row ${i + 1}: `);
+    let rowArray = rowInput.trim().split(/\s+/).map(Number);
+
+    // Basic validation to make sure correct number of elements were entered
+    while (rowArray.length !== cols || rowArray.some(isNaN)) {
+      console.log(`Error: Please enter exactly ${cols} space-separated numbers.`);
+      rowInput = readlineSync.question(`Enter ${labelPrefix}row ${i + 1}: `);
+      rowArray = rowInput.trim().split(/\s+/).map(Number);
+    }
+
+    matrix.push(rowArray);
+  }
+
+  return matrix;
+}
+
+/**
+ * Prints a matrix in a neatly aligned grid format.
+ * @param {number[][]} matrix - 2D Array matrix to display.
+ */
+function printMatrix(matrix) {
+  for (let i = 0; i < matrix.length; i++) {
+    const rowString = matrix[i].map(num => String(num).padStart(4, ' ')).join(' ');
+    console.log(rowString);
+  }
+}
+
+/**
+ * PART A: Computes the transpose of an M x N matrix.
+ * @param {number[][]} matrix - Input M x N matrix.
+ * @returns {number[][]} - Transposed N x M matrix.
+ */
+function transposeMatrix(matrix) {
+  const rows = matrix.length;
+  const cols = matrix[0].length;
+  const transposed = [];
+
+  for (let j = 0; j < cols; j++) {
+    const newRow = [];
+    for (let i = 0; i < rows; i++) {
+      newRow.push(matrix[i][j]);
+    }
+    transposed.push(newRow);
+  }
+
+  return transposed;
+}
+
+/**
+ * PART B: Adds two M x N matrices element-wise.
+ * @param {number[][]} matrixA - First M x N matrix.
+ * @param {number[][]} matrixB - Second M x N matrix.
+ * @returns {number[][]} - Resultant M x N matrix sum.
+ */
+function addMatrices(matrixA, matrixB) {
+  const rows = matrixA.length;
+  const cols = matrixA[0].length;
+  const result = [];
+
+  for (let i = 0; i < rows; i++) {
+    const rowSum = [];
+    for (let j = 0; j < cols; j++) {
+      rowSum.push(matrixA[i][j] + matrixB[i][j]);
+    }
+    result.push(rowSum);
+  }
+
+  return result;
+}
+
+/**
+ * PART C: Multiplies matrix A (M x N) and matrix B (N x P).
+ * @param {number[][]} matrixA - First matrix (M x N).
+ * @param {number[][]} matrixB - Second matrix (N x P).
+ * @returns {number[][]} - Resultant matrix product (M x P).
+ */
+function multiplyMatrices(matrixA, matrixB) {
+  const rowsA = matrixA.length;
+  const colsA = matrixA[0].length; // also rowsB
+  const colsB = matrixB[0].length;
+
+  const result = [];
+
+  for (let i = 0; i < rowsA; i++) {
+    const newRow = [];
+    for (let j = 0; j < colsB; j++) {
+      let sum = 0;
+      for (let k = 0; k < colsA; k++) {
+        sum += matrixA[i][k] * matrixB[k][j];
+      }
+      newRow.push(sum);
+    }
+    result.push(newRow);
+  }
+
+  return result;
+}
+
+/**
+ * Main execution function demonstrating all parts.
+ */
+function main() {
+  console.log('--- PART A: TRANSPOSE A MATRIX ---');
+  const rowsA = readlineSync.questionInt('Enter number of rows: ');
+  const colsA = readlineSync.questionInt('Enter number of columns: ');
+
+  const matrixA = readMatrix(rowsA, colsA);
+
+  console.log('\nOriginal Matrix:');
+  printMatrix(matrixA);
+
+  const transposed = transposeMatrix(matrixA);
+  console.log('\nTransposed Matrix:');
+  printMatrix(transposed);
+
+  console.log('\n--- PART B: ADD TWO MATRICES ---');
+  console.log(`Reading Matrix B of size (${rowsA} x ${colsA}):`);
+  const matrixB = readMatrix(rowsA, colsA, 'Matrix B');
+
+  const sumMatrix = addMatrices(matrixA, matrixB);
+  console.log('\nMatrix A + Matrix B:');
+  printMatrix(sumMatrix);
+
+  console.log('\n--- PART C: MULTIPLY TWO MATRICES ---');
+  console.log(`For multiplication (A x C), Matrix C must have ${colsA} rows.`);
+  const colsC = readlineSync.questionInt('Enter number of columns for Matrix C: ');
+
+  const matrixC = readMatrix(colsA, colsC, 'Matrix C');
+
+  const productMatrix = multiplyMatrices(matrixA, matrixC);
+  console.log('\nMatrix A x Matrix C:');
+  printMatrix(productMatrix);
+}
+
+main();
