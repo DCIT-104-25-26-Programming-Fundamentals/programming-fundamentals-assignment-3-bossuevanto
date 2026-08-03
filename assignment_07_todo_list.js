@@ -81,4 +81,110 @@
 // YOUR CODE BELOW — remove the // symbols from the scaffold and fill it in
 // =============================================================================
 
+const readlineSync = require('readline-sync');
 
+// Global task list storage array
+let tasks = [];
+
+/**
+ * FEATURE 1: Adds a new task to the array.
+ */
+function addTask() {
+  const taskDescription = readlineSync.question('Enter task: ').trim();
+
+  if (taskDescription.length === 0) {
+    console.log('Error: Task description cannot be empty.');
+    return;
+  }
+
+  tasks.push(taskDescription);
+  console.log(`Task added: "${taskDescription}"`);
+}
+
+/**
+ * FEATURE 2: Displays all tasks numbered starting from 1.
+ */
+function viewTasks() {
+  if (tasks.length === 0) {
+    console.log('\nYour task list is empty!');
+    return;
+  }
+
+  console.log('\nYour Tasks:');
+  for (let i = 0; i < tasks.length; i++) {
+    console.log(`${i + 1}. ${tasks[i]}`);
+  }
+}
+
+/**
+ * FEATURE 3: Deletes a task selected by its 1-based index.
+ */
+function deleteTask() {
+  if (tasks.length === 0) {
+    console.log('\nNo tasks available to delete.');
+    return;
+  }
+
+  // Display current tasks to help user pick
+  viewTasks();
+
+  const taskNum = readlineSync.questionInt('\nEnter task number to delete: ');
+
+  // Validate the entered index (1-based)
+  if (taskNum < 1 || taskNum > tasks.length) {
+    console.log('Error: Invalid task number.');
+    return;
+  }
+
+  // Convert 1-based user input to 0-based array index
+  const arrayIndex = taskNum - 1;
+  const removedTask = tasks.splice(arrayIndex, 1)[0];
+
+  console.log(`Task "${removedTask}" has been removed.`);
+}
+
+/**
+ * Displays the main menu choices.
+ */
+function displayMenu() {
+  console.log('\n============================');
+  console.log('       TO-DO LIST MENU      ');
+  console.log('============================');
+  console.log('1. Add task');
+  console.log('2. View tasks');
+  console.log('3. Delete task');
+  console.log('4. Quit');
+}
+
+/**
+ * Main application loop driver.
+ */
+function main() {
+  let running = true;
+
+  while (running) {
+    displayMenu();
+    const choice = readlineSync.questionInt('Enter your choice (1-4): ');
+
+    switch (choice) {
+      case 1:
+        addTask();
+        break;
+      case 2:
+        viewTasks();
+        break;
+      case 3:
+        deleteTask();
+        break;
+      case 4:
+        console.log('Goodbye!');
+        running = false;
+        break;
+      default:
+        console.log('Invalid choice! Please select a number between 1 and 4.');
+        break;
+    }
+  }
+}
+
+main();
