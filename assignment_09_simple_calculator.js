@@ -74,4 +74,120 @@
 // YOUR CODE BELOW — remove the // symbols from the scaffold and fill it in
 // =============================================================================
 
+const readlineSync = require('readline-sync');
 
+/**
+ * ARITHMETIC FUNCTIONS
+ */
+function add(a, b) {
+  return a + b;
+}
+
+function subtract(a, b) {
+  return a - b;
+}
+
+function multiply(a, b) {
+  return a * b;
+}
+
+function divide(a, b) {
+  if (b === 0) {
+    return 'Error: Cannot divide by zero.';
+  }
+  return a / b;
+}
+
+function modulus(a, b) {
+  if (b === 0) {
+    return 'Error: Cannot perform modulus by zero.';
+  }
+  return a % b;
+}
+
+function power(a, b) {
+  return Math.pow(a, b);
+}
+
+/**
+ * Displays the calculator menu options.
+ */
+function displayMenu() {
+  console.log('\n============================');
+  console.log('      SIMPLE CALCULATOR     ');
+  console.log('============================');
+  console.log('1. Addition       ( + )');
+  console.log('2. Subtraction    ( - )');
+  console.log('3. Multiplication ( * )');
+  console.log('4. Division       ( / )');
+  console.log('5. Modulus        ( % )');
+  console.log('6. Exponentiation ( ** )');
+  console.log('7. Quit');
+}
+
+/**
+ * Main application loop driver.
+ */
+function main() {
+  let running = true;
+
+  while (running) {
+    displayMenu();
+    const choice = readlineSync.questionInt('Select an operation (1-7): ');
+
+    if (choice === 7) {
+      console.log('Goodbye!');
+      running = false;
+      break;
+    }
+
+    if (choice < 1 || choice > 7) {
+      console.log('Invalid choice! Please select a number between 1 and 7.');
+      continue;
+    }
+
+    // Prompt for operands
+    const num1 = readlineSync.questionFloat('Enter first number : ');
+    const num2 = readlineSync.questionFloat('Enter second number: ');
+
+    let result;
+    let operatorSymbol;
+
+    switch (choice) {
+      case 1:
+        result = add(num1, num2);
+        operatorSymbol = '+';
+        break;
+      case 2:
+        result = subtract(num1, num2);
+        operatorSymbol = '-';
+        break;
+      case 3:
+        result = multiply(num1, num2);
+        operatorSymbol = '*';
+        break;
+      case 4:
+        result = divide(num1, num2);
+        operatorSymbol = '/';
+        break;
+      case 5:
+        result = modulus(num1, num2);
+        operatorSymbol = '%';
+        break;
+      case 6:
+        result = power(num1, num2);
+        operatorSymbol = '**';
+        break;
+    }
+
+    // Handle error string return (e.g. zero division) vs numeric output
+    if (typeof result === 'string') {
+      console.log(result);
+    } else {
+      console.log(`Result: ${num1} ${operatorSymbol} ${num2} = ${result.toFixed(2)}`);
+    }
+  }
+}
+
+// Start the calculator application
+main();
